@@ -1,6 +1,8 @@
+require('dotenv').config()
 const { body, validationResult } = require("express-validator")
 const db = require('../db/queries')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 
 const userNameRegex = /^[A-Za-z0-9 ]+$/
@@ -41,4 +43,29 @@ const postUserToDb = [validateUserData, async (req, res) => {
     }
 }]
 
-module.exports = { postUserToDb }
+const loginUser = async (req, res) => {
+    const { userName, userPassword, rememberMe } = req.body
+    try {
+        //check if username exists or not in db.
+        const user = await db.getUserFromDb(userName);
+        if (user.length == 0) {
+            return res.json({ status: 404, msg: [{ path: 'userName', msg: 'User not found!' }] })
+        }
+        //check if the password matches.
+        const match = await bcrypt.compare(userPassword, user[0].user_password)
+        if (!match) {
+            return res.json({ status: 401, msg: [{ path: 'userPassword', msg: 'Wrong password!' }] })
+        }
+        //data to store in the token.
+        const payload = {
+            userId: user[0].user_id,
+            userName: user[0].user_name
+        }
+        const token = jwt.sign(payload, process.env.MY_SECRET_KEY, rememberMe ? { expiresIn: '7d' } : { expiresIn: '1h' });
+        return res.json({ status: 200, msg: 'User logged in!', token: token, userName: user[0].user_name })
+    } catch (error) {
+
+    }
+}
+
+module.exports = { postUserToDb, loginUser }
