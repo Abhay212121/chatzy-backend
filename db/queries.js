@@ -9,4 +9,8 @@ const getUserFromDb = async (userName) => {
     return rows
 }
 
-module.exports = { addUserToDb, getUserFromDb }
+const updateNicknameInDb = async (userNickname, userId) => {
+    pool.query(`UPDATE users SET user_nickname = ($1) WHERE user_id = ($2)`, [userNickname, userId])
+}
+
+module.exports = { addUserToDb, getUserFromDb, updateNicknameInDb }

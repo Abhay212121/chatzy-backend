@@ -62,10 +62,20 @@ const loginUser = async (req, res) => {
             userName: user[0].user_name
         }
         const token = jwt.sign(payload, process.env.MY_SECRET_KEY, rememberMe ? { expiresIn: '7d' } : { expiresIn: '1h' });
-        return res.json({ status: 200, msg: 'User logged in!', token: token, userName: user[0].user_name })
+        return res.json({ status: 200, msg: 'User logged in!', token: token, userName: user[0].user_name, userId: user[0].user_id })
     } catch (error) {
 
     }
 }
 
-module.exports = { postUserToDb, loginUser }
+const setNickname = async (req, res) => {
+    const { userId, nickName } = req.body
+    try {
+        await db.updateNicknameInDb(nickName, userId)
+        res.json({ status: 200, msg: 'Nickname updated!' })
+    } catch (error) {
+        res.json({ status: 401, msg: 'There was an error updating nickname!' })
+    }
+}
+
+module.exports = { postUserToDb, loginUser, setNickname }
