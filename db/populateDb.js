@@ -13,9 +13,10 @@ DROP TABLE users;
 `
 
 const createMessagesSQL = `
+    DROP TABLE messages;
     CREATE TABLE IF NOT EXISTS messages(
         message_id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-        message_from VARCHAR (255),
+        message_from INTEGER,
         message_text TEXT,
         message_time VARCHAR (255),
         message_group INTEGER
@@ -35,7 +36,7 @@ async function main() {
         connectionString: process.env.CONNECTION_STRING
     })
     await client.connect()
-    await client.query(createUserSQL)
+    await client.query(createMessagesSQL)
     await client.end()
     console.log('Done!')
 }
