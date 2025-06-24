@@ -14,12 +14,18 @@ const updateNicknameInDb = async (userNickname, userId) => {
 }
 
 const postMessageInDb = async (userId, groupId, messageTime, messageText) => {
-    await pool.query(`INSERT INTO messages(message_from,message_text,message_time,message_group) VALUES($1,$2,$3,$4)`, [userId, messageText, messageTime, groupId])
+    const { rows } = await pool.query(`INSERT INTO messages(message_from,message_text,message_time,message_group) VALUES($1,$2,$3,$4) RETURNING *`, [userId, messageText, messageTime, groupId])
+    return rows[0];
 }
 
 const getAllMessagesInGroup = async (groupId) => {
-    const { rows } = await pool.query('SELECT user_name,user_nickname,message_id,message_from,message_text,message_time,message_group FROM users JOIN messages ON users.user_id = messages.message_from WHERE messages.message_group = $1 ORDER BY messages.message_time ASC', [groupId])
+    const { rows } = await pool.query('SELECT user_name,user_nickname,message_id,message_from,message_text,message_time,message_group FROM users JOIN messages ON users.user_id = messages.message_from WHERE messages.message_group = $1 ORDER BY message_id ASC', [groupId])
     return rows;
 }
 
-module.exports = { addUserToDb, getUserFromDb, updateNicknameInDb, postMessageInDb, getAllMessagesInGroup }
+const getNicknameFromUserId = async (userId) => {
+    const { rows } = await pool.query(`SELECT user_nickname FROM users WHERE user_id = $1`, [userId])
+    return rows[0].user_nickname
+}
+
+module.exports = { addUserToDb, getUserFromDb, updateNicknameInDb, postMessageInDb, getAllMessagesInGroup, getNicknameFromUserId }

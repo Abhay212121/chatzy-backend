@@ -5,7 +5,6 @@ const cors = require('cors')
 const userRoute = require('./routes/userRoute')
 const homepageRouter = require('./routes/homepageRoute')
 const messagesRouter = require('./routes/messagesRoute')
-const groupRouter = require('./routes/groupRoute')
 
 const app = express()
 
@@ -15,7 +14,5 @@ app.use(express.json())
 app.use('/user', userRoute)
 app.use('/homepage', homepageRouter)
 app.use('/messages', messagesRouter)
-app.use('/group', groupRouter)
 
-const PORT = process.env.PORT
-app.listen(PORT, () => `SERVER STARTED OVER PORT:${PORT}`)
+module.exports = app;

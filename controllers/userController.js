@@ -69,9 +69,9 @@ const loginUser = async (req, res) => {
 }
 
 const setNickname = async (req, res) => {
-    const { userId, nickName } = req.body
+    const { userId, nickname } = req.body
     try {
-        await db.updateNicknameInDb(nickName, userId)
+        await db.updateNicknameInDb(nickname, userId)
         return res.json({ status: 200, msg: 'Nickname updated!' })
     } catch (error) {
         return res.json({ status: 401, msg: 'There was an error updating nickname!' })

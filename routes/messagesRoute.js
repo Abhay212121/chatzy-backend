@@ -3,7 +3,7 @@ const { postMessage, getMessages } = require('../controllers/messageController')
 
 const messagesRouter = Router()
 
-messagesRouter.post('/postMessage', postMessage)
+// messagesRouter.post('/postMessage', postMessage)
 messagesRouter.get('/getMessage', getMessages)
 
 module.exports = messagesRouter
